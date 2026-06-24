@@ -25,14 +25,13 @@ const ICON = {
   // Tabs
   dashboard: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>`,
-  facebook: `<svg viewBox="0 0 24 24" fill="currentColor">
-    <path d="M13.5 21v-7.5H16l.4-3h-2.9V8.6c0-.87.25-1.46 1.5-1.46H16.5V4.46c-.3-.04-1.3-.13-2.46-.13-2.43 0-4.04 1.48-4.04 4.2v2.34H7.5v3H10V21h3.5z"/></svg>`,
-  video: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>`,
-  music: `<svg viewBox="0 0 24 24" fill="currentColor">
-    <path d="M11 18.5A3.5 3.5 0 1 1 9 15.35V5.2a1 1 0 0 1 .76-.97l7-1.7A1 1 0 0 1 18 3.5v3.05L11 8.2v10.3z"/></svg>`,
+  facebook: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>`,
+  video: `<svg viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M4 6C3.45 6 3 6.45 3 7v10c0 .55.45 1 1 1h10c.55 0 1-.45 1-1v-1.07c0-1.2 1.34-1.91 2.33-1.24L21 17.13V6.87l-3.67 2.44C16.34 9.98 15 9.27 15 8.07V7c0-.55-.45-1-1-1H4zM1 7c0-1.66 1.34-3 3-3h10c1.66 0 3 1.34 3 3v.13l2.89-1.93C21.22 4.32 23 5.27 23 6.87v10.26c0 1.6-1.78 2.55-3.11 1.67L17 16.87V17c0 1.66-1.34 3-3 3H4c-1.66 0-3-1.34-3-3V7z"/></svg>`,
+  music: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.2.02 8.68 3.15c-.34.09-.59.4-.59.76V18.37c-.65-.4-1.46-.63-2.35-.63-2.15 0-3.91 1.4-3.91 3.13S3.58 24 5.74 24s3.91-1.4 3.91-3.13V9.22l10.96-2.74v7.2c-.66-.4-1.47-.63-2.35-.63-2.16 0-3.91 1.4-3.91 3.13s1.75 3.13 3.91 3.13 3.91-1.41 3.91-3.13V.78c0-.5-.48-.88-.97-.76z"/></svg>`,
   youtube: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <rect x="2.5" y="6" width="19" height="12" rx="3"/><polygon points="10 9.5 15 12 10 14.5" fill="currentColor" stroke="none"/></svg>`,
+    <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/>
+    <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="currentColor" stroke="none"/></svg>`,
   menu: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>`,
 };
@@ -179,9 +178,12 @@ function renderCards() {
 }
 
 /* ===================== Montagem ===================== */
+function logoSrc() {
+  return currentTheme() === "dark" ? "img/logo-white.png" : "img/logo-dark.png";
+}
 function buildLogo() {
   document.getElementById("logo").innerHTML =
-    `${ICON.logo}<span class="wordmark"><span class="utm">utm</span><span class="ify">ify</span></span>`;
+    `<img class="logo-img" src="${logoSrc()}" alt="utmify"/>`;
 }
 
 function buildHeaderIcons() {
@@ -210,6 +212,8 @@ function currentTheme() { return document.documentElement.getAttribute("data-the
 function updateThemeIcon() {
   // Mostra o ícone do tema oposto (igual ao app: lua no escuro, sol no claro)
   document.getElementById("btnTheme").innerHTML = currentTheme() === "dark" ? ICON.moon : ICON.sun;
+  const li = document.querySelector(".logo-img");
+  if (li) li.src = logoSrc();
   document.querySelector('meta[name="theme-color"]')
     .setAttribute("content", currentTheme() === "dark" ? "#1c1c1e" : "#ffffff");
 }
