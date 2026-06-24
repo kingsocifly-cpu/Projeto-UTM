@@ -7,14 +7,27 @@ on:
 
 jobs:
   build:
-    runs-on: macos-14
+    runs-on: macos-15
     
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: List available Xcode versions
+        run: ls /Applications | grep Xcode
+
       - name: Select Xcode
-        run: sudo xcode-select -s /Applications/Xcode_15.4.app || sudo xcode-select -s /Applications/Xcode.app
+        run: |
+          if [ -d "/Applications/Xcode_16.app" ]; then
+            sudo xcode-select -s /Applications/Xcode_16.app
+          elif [ -d "/Applications/Xcode_16.1.app" ]; then
+            sudo xcode-select -s /Applications/Xcode_16.1.app
+          elif [ -d "/Applications/Xcode_16.2.app" ]; then
+            sudo xcode-select -s /Applications/Xcode_16.2.app
+          else
+            sudo xcode-select -s $(ls -d /Applications/Xcode*.app | tail -1)
+          fi
+          xcodebuild -version
 
       - name: Install XcodeGen
         run: brew install xcodegen
@@ -27,6 +40,7 @@ jobs:
             bundleIdPrefix: com.utmify
             deploymentTarget:
               iOS: "16.0"
+            xcodeVersion: "16.0"
           settings:
             base:
               CODE_SIGN_IDENTITY: ""
@@ -60,13 +74,6 @@ jobs:
       - name: Generate Xcode Project
         run: xcodegen generate
 
-      - name: Show project structure
-        run: |
-          echo "=== Project files ==="
-          find UTMify -type f | head -50
-          echo "=== Xcode schemes ==="
-          xcodebuild -project UTMify.xcodeproj -list
-
       - name: Build for iOS Device
         run: |
           xcodebuild build \
@@ -81,11 +88,8 @@ jobs:
             DEVELOPMENT_TEAM="" \
             -destination "generic/platform=iOS"
 
-      - name: Find and package IPA
+      - name: Package IPA
         run: |
-          echo "=== Looking for .app ==="
-          find build -name "*.app" -type d
-          
           APP_PATH=$(find build/DerivedData -name "UTMify.app" -type d | head -1)
           
           if [ -z "$APP_PATH" ]; then
