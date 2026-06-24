@@ -1,28 +1,21 @@
-name: Build iOS e publicar no GitHub
+name: Build iOS (.ipa) no GitHub
 
-# Dispara ao criar uma tag "v*" (ex: v1.0.0) ou manualmente pela aba Actions.
+# Compila o app DIRETO num runner macOS do GitHub (sem Expo/EAS, sem conta externa).
+# Gera um .ipa NAO ASSINADO e anexa numa Release.
+# Para instalar em iPhone real depois: use sideload (AltStore/Sideloadly) ou
+# configure assinatura da Apple (requer Apple Developer Program).
 on:
   push:
     tags:
       - 'v*'
   workflow_dispatch:
-    inputs:
-      profile:
-        description: 'Perfil de build do EAS'
-        required: true
-        default: 'preview'
-        type: choice
-        options:
-          - preview
-          - production
-          - preview-simulator
 
 permissions:
   contents: write
 
 jobs:
   build-ios:
-    runs-on: ubuntu-latest
+    runs-on: macos-14
     steps:
       - name: Checkout do repositório
         uses: actions/checkout@v4
@@ -33,40 +26,54 @@ jobs:
           node-version: 20
           cache: npm
 
-      - name: Configurar EAS / Expo
-        uses: expo/expo-github-action@v8
-        with:
-          eas-version: latest
-          token: ${{ secrets.EXPO_TOKEN }}
-
       - name: Instalar dependências
         run: npm ci
 
-      - name: Definir perfil de build
-        id: vars
-        run: echo "profile=${{ github.event.inputs.profile || 'preview' }}" >> "$GITHUB_OUTPUT"
+      - name: Gerar projeto iOS nativo (expo prebuild)
+        run: npx expo prebuild --platform ios --no-install
 
-      - name: Build iOS no EAS (aguarda concluir)
+      - name: Instalar CocoaPods
         run: |
-          eas build \
-            --platform ios \
-            --profile ${{ steps.vars.outputs.profile }} \
-            --non-interactive \
-            --wait \
-            --json > build-output.json
-          cat build-output.json
+          cd ios
+          pod install
 
-      - name: Baixar o artefato (.ipa)
+      - name: Descobrir workspace e scheme
+        id: xc
         run: |
-          URL=$(node -e "const b=require('./build-output.json'); const x=Array.isArray(b)?b[0]:b; console.log(x.artifacts.applicationArchiveUrl)")
-          echo "Artifact URL: $URL"
-          curl -L "$URL" -o app-ios.ipa
-          ls -lh app-ios.ipa
+          WS=$(ls ios | grep '\.xcworkspace$' | head -n1)
+          SCHEME=$(basename "$WS" .xcworkspace)
+          echo "workspace=ios/$WS" >> "$GITHUB_OUTPUT"
+          echo "scheme=$SCHEME" >> "$GITHUB_OUTPUT"
+          echo "Workspace: ios/$WS | Scheme: $SCHEME"
+
+      - name: Compilar (archive sem assinatura)
+        run: |
+          xcodebuild \
+            -workspace "${{ steps.xc.outputs.workspace }}" \
+            -scheme "${{ steps.xc.outputs.scheme }}" \
+            -configuration Release \
+            -sdk iphoneos \
+            -archivePath "$PWD/build/App.xcarchive" \
+            archive \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            PROVISIONING_PROFILE=""
+
+      - name: Empacotar .ipa (nao assinado)
+        run: |
+          mkdir -p build/Payload
+          APP=$(ls -d build/App.xcarchive/Products/Applications/*.app | head -n1)
+          echo "App encontrado: $APP"
+          cp -R "$APP" build/Payload/
+          cd build
+          zip -qr app-ios-unsigned.ipa Payload
+          ls -lh app-ios-unsigned.ipa
 
       - name: Publicar na Release do GitHub
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_type == 'tag' && github.ref_name || format('build-{0}', github.run_number) }}
-          name: ${{ github.ref_type == 'tag' && github.ref_name || format('Build manual #{0}', github.run_number) }}
-          files: app-ios.ipa
+          name: ${{ github.ref_type == 'tag' && github.ref_name || format('Build #{0}', github.run_number) }}
+          files: build/app-ios-unsigned.ipa
           fail_on_unmatched_files: true

@@ -11,53 +11,27 @@ npx expo start
 
 Escaneie o QR code com o app **Expo Go** no iPhone (mesma rede Wi-Fi).
 
-## Gerar o `.ipa` e subir no GitHub
+## Gerar o `.ipa` no próprio GitHub
 
-Você está no Windows, então o `.ipa` é compilado na nuvem com **EAS Build** (não precisa de Mac). O GitHub apenas hospeda o arquivo numa Release.
+O workflow `.github/workflows/ios-build.yml` compila o app num **runner macOS do GitHub** (grátis), sem Expo/EAS e sem conta externa. Ele gera um `.ipa` **não assinado** e anexa numa Release.
 
-### Pré-requisitos
+### Como disparar
 
-1. **Conta Expo** (grátis): https://expo.dev
-2. **Apple Developer Program** (US$ 99/ano) — necessário para um `.ipa` que instala em iPhone real.
-   - Sem conta Apple, use o perfil `preview-simulator` (gera build só para o simulador de iOS num Mac).
-
-### Opção A — Build manual e upload manual
-
-```bash
-npm install -g eas-cli
-eas login
-eas init                 # cria o projeto no Expo e grava o projectId no app.json
-eas build --platform ios --profile preview
-```
-
-Na primeira vez o EAS pergunta sobre as credenciais Apple (login + assinatura). Ao terminar, ele mostra um link para baixar o `.ipa`. Baixe e suba manualmente em:
-`Seu repositório no GitHub > Releases > Draft a new release > anexar o .ipa`.
-
-### Opção B — Automático via GitHub Actions (recomendado)
-
-O workflow `.github/workflows/ios-build.yml` compila e anexa o `.ipa` numa Release sozinho.
-
-1. Gere um token de acesso no Expo: https://expo.dev/settings/access-tokens
-2. No GitHub: `Settings > Secrets and variables > Actions > New repository secret`
-   - Nome: `EXPO_TOKEN`
-   - Valor: o token gerado
-3. Configure as credenciais Apple uma vez (localmente), para o build não-interativo funcionar:
-   ```bash
-   eas credentials
-   ```
-4. Dispare o build de uma das formas:
-   - Crie uma tag: `git tag v1.0.0 && git push origin v1.0.0`
-   - Ou pela aba **Actions > Build iOS > Run workflow**
+- Pela aba **Actions > Build iOS (.ipa) no GitHub > Run workflow**, ou
+- Criando uma tag:
+  ```bash
+  git tag v1.0.0
+  git push origin v1.0.0
+  ```
 
 O `.ipa` aparece automaticamente na aba **Releases**.
 
-## Perfis de build (eas.json)
+### Sobre instalar no iPhone
 
-| Perfil               | Resultado                              | Precisa de conta Apple? |
-|----------------------|----------------------------------------|--------------------------|
-| `preview`            | `.ipa` assinado (distribuição interna) | Sim                      |
-| `production`         | `.ipa` para a App Store                | Sim                      |
-| `preview-simulator`  | build para o simulador de iOS          | Não                      |
+O `.ipa` gerado é **não assinado**. Para instalar num iPhone real você precisa de uma das opções:
+
+- **Sideload** com [AltStore](https://altstore.io) ou [Sideloadly](https://sideloadly.io) — re-assina com seu Apple ID grátis (válido 7 dias).
+- **Assinatura oficial** via **Apple Developer Program** (US$ 99/ano) — para isso é melhor usar o EAS Build (`eas build --platform ios`) que cuida das credenciais.
 
 ## Estrutura
 
