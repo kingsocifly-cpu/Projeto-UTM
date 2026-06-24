@@ -13,21 +13,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: List available Xcode versions
-        run: ls /Applications | grep Xcode
-
       - name: Select Xcode
         run: |
-          if [ -d "/Applications/Xcode_16.app" ]; then
-            sudo xcode-select -s /Applications/Xcode_16.app
-          elif [ -d "/Applications/Xcode_16.1.app" ]; then
-            sudo xcode-select -s /Applications/Xcode_16.1.app
-          elif [ -d "/Applications/Xcode_16.2.app" ]; then
-            sudo xcode-select -s /Applications/Xcode_16.2.app
-          else
-            sudo xcode-select -s $(ls -d /Applications/Xcode*.app | tail -1)
-          fi
+          sudo xcode-select -s $(ls -d /Applications/Xcode_16*.app | sort -V | tail -1)
           xcodebuild -version
+          xcrun simctl list runtimes
 
       - name: Install XcodeGen
         run: brew install xcodegen
@@ -40,13 +30,14 @@ jobs:
             bundleIdPrefix: com.utmify
             deploymentTarget:
               iOS: "16.0"
-            xcodeVersion: "16.0"
           settings:
             base:
               CODE_SIGN_IDENTITY: ""
               CODE_SIGNING_REQUIRED: "NO"
               CODE_SIGNING_ALLOWED: "NO"
               DEVELOPMENT_TEAM: ""
+              ENABLE_PREVIEWS: "NO"
+              COMPILER_INDEX_STORE_ENABLE: "NO"
           targets:
             UTMify:
               type: application
@@ -65,10 +56,13 @@ jobs:
                   SWIFT_VERSION: "5.0"
                   TARGETED_DEVICE_FAMILY: "1,2"
                   ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+                  ASSETCATALOG_COMPILER_SKIP_APP_STORE_DEPLOYMENT: "YES"
                   CODE_SIGN_IDENTITY: ""
                   CODE_SIGNING_REQUIRED: "NO"
                   CODE_SIGNING_ALLOWED: "NO"
                   DEVELOPMENT_TEAM: ""
+                  ENABLE_PREVIEWS: "NO"
+                  SWIFT_OPTIMIZATION_LEVEL: "-Onone"
           EOF
 
       - name: Generate Xcode Project
@@ -86,7 +80,12 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
             DEVELOPMENT_TEAM="" \
-            -destination "generic/platform=iOS"
+            ENABLE_PREVIEWS=NO \
+            SWIFT_OPTIMIZATION_LEVEL="-Onone" \
+            ASSETCATALOG_COMPILER_SKIP_APP_STORE_DEPLOYMENT=YES \
+            -destination "generic/platform=iOS" \
+            -skipPackagePluginValidation \
+            COMPILER_INDEX_STORE_ENABLE=NO
 
       - name: Package IPA
         run: |
@@ -94,7 +93,7 @@ jobs:
           
           if [ -z "$APP_PATH" ]; then
             echo "ERROR: UTMify.app not found!"
-            find build -type d | head -30
+            find build -type d -name "*.app"
             exit 1
           fi
           
@@ -104,7 +103,7 @@ jobs:
           cp -r "$APP_PATH" output/Payload/
           cd output
           zip -r UTMify.ipa Payload/
-          echo "=== IPA created ==="
+          echo "=== IPA created successfully ==="
           ls -la UTMify.ipa
 
       - name: Upload IPA
