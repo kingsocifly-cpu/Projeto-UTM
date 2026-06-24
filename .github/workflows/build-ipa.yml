@@ -1,0 +1,85 @@
+name: Build IPA (Unsigned)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create Xcode Project
+        run: |
+          cat > project.yml << 'EOF'
+          name: UTMify
+          options:
+            bundleIdPrefix: com.utmify
+            deploymentTarget:
+              iOS: "16.0"
+            xcodeVersion: "15.0"
+          settings:
+            base:
+              CODE_SIGN_IDENTITY: ""
+              CODE_SIGNING_REQUIRED: "NO"
+              CODE_SIGNING_ALLOWED: "NO"
+          targets:
+            UTMify:
+              type: application
+              platform: iOS
+              sources:
+                - path: UTMify
+              settings:
+                base:
+                  INFOPLIST_FILE: UTMify/Info.plist
+                  PRODUCT_BUNDLE_IDENTIFIER: com.utmify.app
+                  CODE_SIGN_IDENTITY: ""
+                  CODE_SIGNING_REQUIRED: "NO"
+                  CODE_SIGNING_ALLOWED: "NO"
+                  DEVELOPMENT_TEAM: ""
+              info:
+                path: UTMify/Info.plist
+                properties:
+                  UILaunchScreen: {}
+          EOF
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode Project
+        run: xcodegen generate
+
+      - name: Build Archive
+        run: |
+          xcodebuild archive \
+            -project UTMify.xcodeproj \
+            -scheme UTMify \
+            -sdk iphoneos \
+            -configuration Release \
+            -archivePath build/UTMify.xcarchive \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            DEVELOPMENT_TEAM="" \
+            -destination "generic/platform=iOS" \
+            | xcpretty || true
+
+      - name: Create IPA
+        run: |
+          mkdir -p build/Payload
+          cp -r build/UTMify.xcarchive/Products/Applications/UTMify.app build/Payload/
+          cd build
+          zip -r UTMify.ipa Payload/
+          echo "IPA created successfully!"
+          ls -la UTMify.ipa
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: UTMify-unsigned
+          path: build/UTMify.ipa
+          retention-days: 90
