@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#1c1c1e" />
+  <title>utmify</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header class="header" id="header">
+      <div class="logo" id="logo"></div>
+      <div class="header-title">Principal</div>
+      <div class="header-actions">
+        <button class="icon-btn" id="btnEdit" aria-label="Editar"></button>
+        <button class="icon-btn" id="btnTheme" aria-label="Tema"></button>
+      </div>
+    </header>
+
+    <!-- Conteúdo rolável -->
+    <main class="scroll" id="scroll"></main>
+
+    <!-- Botão flutuante (relatório) -->
+    <button class="fab" id="fab" aria-label="Relatório"></button>
+
+    <!-- Barra de abas inferior -->
+    <nav class="tabbar" id="tabbar"></nav>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

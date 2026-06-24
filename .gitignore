@@ -1,42 +1,19 @@
 # dependencies
 node_modules/
 
-# Expo
-.expo/
-dist/
-web-build/
-expo-env.d.ts
-
-# Native
-*.orig.*
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
+# Native (geradas no CI pelo Capacitor)
 ios/
 android/
 
-# Metro
-.metro-health-check*
-
-# debug
-npm-debug.*
-yarn-debug.*
-yarn-error.*
-
-# macOS
-.DS_Store
-
-# Env / secrets
-.env
-.env.local
-*.local
-
-# EAS build artifacts
+# build artifacts
+build/
+dist/
 *.ipa
 *.apk
 *.aab
 
-# Logs
+# misc
+.DS_Store
 *.log
+.env
+.env.local

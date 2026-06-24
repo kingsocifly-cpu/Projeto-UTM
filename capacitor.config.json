@@ -1,0 +1,10 @@
+{
+  "appId": "com.utmify.dashboard",
+  "appName": "utmify",
+  "webDir": "www",
+  "backgroundColor": "#0e0e0e",
+  "ios": {
+    "contentInset": "never",
+    "backgroundColor": "#0e0e0e"
+  }
+}
