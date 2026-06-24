@@ -13,7 +13,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Create Xcode Project
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app || sudo xcode-select -s /Applications/Xcode.app
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Create XcodeGen spec
         run: |
           cat > project.yml << 'EOF'
           name: UTMify
@@ -21,65 +27,85 @@ jobs:
             bundleIdPrefix: com.utmify
             deploymentTarget:
               iOS: "16.0"
-            xcodeVersion: "15.0"
           settings:
             base:
               CODE_SIGN_IDENTITY: ""
               CODE_SIGNING_REQUIRED: "NO"
               CODE_SIGNING_ALLOWED: "NO"
+              DEVELOPMENT_TEAM: ""
           targets:
             UTMify:
               type: application
               platform: iOS
               sources:
                 - path: UTMify
+                  excludes:
+                    - "**/*.plist"
+              resources:
+                - path: UTMify/Assets.xcassets
+                - path: UTMify/Fonts
               settings:
                 base:
                   INFOPLIST_FILE: UTMify/Info.plist
                   PRODUCT_BUNDLE_IDENTIFIER: com.utmify.app
+                  SWIFT_VERSION: "5.0"
+                  TARGETED_DEVICE_FAMILY: "1,2"
+                  ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
                   CODE_SIGN_IDENTITY: ""
                   CODE_SIGNING_REQUIRED: "NO"
                   CODE_SIGNING_ALLOWED: "NO"
                   DEVELOPMENT_TEAM: ""
-              info:
-                path: UTMify/Info.plist
-                properties:
-                  UILaunchScreen: {}
           EOF
-
-      - name: Install XcodeGen
-        run: brew install xcodegen
 
       - name: Generate Xcode Project
         run: xcodegen generate
 
-      - name: Build Archive
+      - name: Show project structure
         run: |
-          xcodebuild archive \
+          echo "=== Project files ==="
+          find UTMify -type f | head -50
+          echo "=== Xcode schemes ==="
+          xcodebuild -project UTMify.xcodeproj -list
+
+      - name: Build for iOS Device
+        run: |
+          xcodebuild build \
             -project UTMify.xcodeproj \
             -scheme UTMify \
             -sdk iphoneos \
             -configuration Release \
-            -archivePath build/UTMify.xcarchive \
+            -derivedDataPath build/DerivedData \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
             DEVELOPMENT_TEAM="" \
-            -destination "generic/platform=iOS" \
-            | xcpretty || true
+            -destination "generic/platform=iOS"
 
-      - name: Create IPA
+      - name: Find and package IPA
         run: |
-          mkdir -p build/Payload
-          cp -r build/UTMify.xcarchive/Products/Applications/UTMify.app build/Payload/
-          cd build
+          echo "=== Looking for .app ==="
+          find build -name "*.app" -type d
+          
+          APP_PATH=$(find build/DerivedData -name "UTMify.app" -type d | head -1)
+          
+          if [ -z "$APP_PATH" ]; then
+            echo "ERROR: UTMify.app not found!"
+            find build -type d | head -30
+            exit 1
+          fi
+          
+          echo "Found app at: $APP_PATH"
+          
+          mkdir -p output/Payload
+          cp -r "$APP_PATH" output/Payload/
+          cd output
           zip -r UTMify.ipa Payload/
-          echo "IPA created successfully!"
+          echo "=== IPA created ==="
           ls -la UTMify.ipa
 
       - name: Upload IPA
         uses: actions/upload-artifact@v4
         with:
           name: UTMify-unsigned
-          path: build/UTMify.ipa
+          path: output/UTMify.ipa
           retention-days: 90
