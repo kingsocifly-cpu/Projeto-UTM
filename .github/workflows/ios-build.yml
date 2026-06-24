@@ -31,6 +31,9 @@ jobs:
       - name: Adicionar plataforma iOS (Capacitor)
         run: npx cap add ios
 
+      - name: Gerar ícone e splash do utmify
+        run: npx capacitor-assets generate --ios
+
       - name: Sincronizar web -> iOS
         run: npx cap sync ios
 
