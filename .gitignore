@@ -1,26 +1,32 @@
-# dependencies
-node_modules/
-
-# Native (geradas no CI pelo Capacitor)
-ios/
-android/
-
-# build artifacts
+# Xcode
 build/
-dist/
-*.ipa
-*.apk
-*.aab
+DerivedData/
+*.xcworkspace
+xcuserdata/
+*.xcuserstate
 
-# misc
+# APK extraction (não subir para o GitHub)
+apk_extracted/
+*.apk
+*.zip
+
+# macOS
 .DS_Store
-*.log
-.env
-.env.local
+*.swp
+*~.nib
 
-# expo (legado)
-.expo/
+# CocoaPods
+Pods/
 
-# APK e extração (análise local, não versionar)
-*.apk
-apk_extract/
+# Swift Package Manager
+.build/
+Package.resolved
+
+# Misc
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# IDE
+.vscode/
+.idea/

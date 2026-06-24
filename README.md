@@ -1,44 +1,74 @@
-# UTM Dashboard
+# UTMify - iOS App (SwiftUI)
 
-App de dashboard de tracking/analytics (React Native + Expo) recriado a partir das telas de referência.
+Réplica fiel do app UTMify para iPhone, construído em SwiftUI nativo com base no APK original (Flutter).
 
-## Rodar localmente (desenvolvimento)
+## Setup no Xcode
+
+1. Abra o Xcode → **File** → **New** → **Project**
+2. Selecione **iOS** → **App** → **SwiftUI** → **Next**
+3. Nome: `UTMify`, Bundle ID: `com.utmify.app`
+4. **Delete** todos os arquivos gerados pelo template
+5. **Arraste** toda a pasta `UTMify/` para dentro do projeto no Xcode
+6. Certifique-se de marcar **"Copy items if needed"** e **"Create folder references"** para Assets
+7. No target → **Build Phases** → **Copy Bundle Resources**, adicione as fontes `.otf`
+8. Build (⌘+B) e Run (⌘+R) no simulador
+
+## Para gerar o IPA
 
 ```bash
-npm install
-npx expo start
+# Archive
+xcodebuild archive -scheme UTMify -archivePath build/UTMify.xcarchive
+
+# Export IPA
+xcodebuild -exportArchive -archivePath build/UTMify.xcarchive -exportPath build/ -exportOptionsPlist ExportOptions.plist
 ```
 
-Escaneie o QR code com o app **Expo Go** no iPhone (mesma rede Wi-Fi).
-
-## Gerar o `.ipa` no próprio GitHub
-
-O workflow `.github/workflows/ios-build.yml` compila o app num **runner macOS do GitHub** (grátis), sem Expo/EAS e sem conta externa. Ele gera um `.ipa` **não assinado** e anexa numa Release.
-
-### Como disparar
-
-- Pela aba **Actions > Build iOS (.ipa) no GitHub > Run workflow**, ou
-- Criando uma tag:
-  ```bash
-  git tag v1.0.0
-  git push origin v1.0.0
-  ```
-
-O `.ipa` aparece automaticamente na aba **Releases**.
-
-### Sobre instalar no iPhone
-
-O `.ipa` gerado é **não assinado**. Para instalar num iPhone real você precisa de uma das opções:
-
-- **Sideload** com [AltStore](https://altstore.io) ou [Sideloadly](https://sideloadly.io) — re-assina com seu Apple ID grátis (válido 7 dias).
-- **Assinatura oficial** via **Apple Developer Program** (US$ 99/ano) — para isso é melhor usar o EAS Build (`eas build --platform ios`) que cuida das credenciais.
-
-## Estrutura
+## Estrutura do Projeto
 
 ```
-App.js                      # raiz: tema, header, navegação por abas
-src/theme.js                # paleta clara/escura
-src/data.js                 # dados/configuração dos cards (zerados)
-src/components/             # Header, cards, filtros, gráfico, tab bar
-src/screens/DashboardScreen.js
+UTMify/
+├── UTMifyApp.swift              # Entry point + font registration
+├── Info.plist                   # Config com fontes UIAppFonts
+├── Fonts/
+│   ├── UberMoveTextRegular.otf  # Fonte original do app
+│   ├── UberMoveTextBold.otf
+│   ├── UberMoveTextMedium.otf
+│   └── UberMoveTextLight.otf
+├── Assets.xcassets/
+│   ├── AppIcon.appiconset/      # Ícone original do app
+│   ├── Logo.imageset/           # Logos dark/light
+│   └── AccentColor.colorset/
+├── Models/
+│   ├── ThemeManager.swift       # Dark/Light mode + cores + Font helper
+│   └── DashboardData.swift      # Modelo de dados
+└── Views/
+    ├── ContentView.swift        # Layout principal + FAB + TabBar
+    ├── HeaderView.swift         # Header com logo UTMify
+    ├── CustomTabBar.swift       # 6 tabs: Grid, Facebook, Video, Music, YouTube, Menu
+    ├── ResumoFilterView.swift   # Card filtros com dropdowns
+    ├── DashboardView.swift      # ScrollView com todos os cards
+    ├── MetricCardView.swift     # Card genérico de métrica
+    ├── DonutChartView.swift     # Gráfico donut "Vendas por Pagamento"
+    ├── TaxaAprovacaoView.swift  # Card com progress circles
+    └── VendasPorInfoView.swift  # Vendas por Produto/Fonte
 ```
+
+## Features
+
+- ✅ Dark Mode / Light Mode (toggle no header)
+- ✅ Fonte UberMove original (extraída do APK)
+- ✅ Cards de métricas: ROAS (verde), Lucro (verde), ROI (vermelho)
+- ✅ Gráfico donut "Vendas por Pagamento" (Pix, Cartão, Boleto, Outros)
+- ✅ Filtros: Período, Conta, Plataforma, Produto, Fonte de Tráfego
+- ✅ Tab Bar com 6 ícones Feather
+- ✅ FAB azul (clipboard)
+- ✅ Taxa de Aprovação com rings circulares
+- ✅ Vendas por Produto / Fonte
+- ✅ Todas as métricas na ordem exata do app original
+- ✅ Formatação brasileira R$ (ponto milhar, vírgula decimal)
+
+## Requisitos
+
+- iOS 16.0+
+- Xcode 15.0+
+- Swift 5.9+
