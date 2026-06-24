@@ -70,10 +70,21 @@ jobs:
           zip -qr app-ios-unsigned.ipa Payload
           ls -lh app-ios-unsigned.ipa
 
+      - name: Definir nome da release
+        id: rel
+        run: |
+          if [ "${{ github.ref_type }}" = "tag" ]; then
+            echo "tag=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+            echo "name=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=build-${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+            echo "name=Build ${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Publicar na Release do GitHub
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref_type == 'tag' && github.ref_name || format('build-{0}', github.run_number) }}
-          name: ${{ github.ref_type == 'tag' && github.ref_name || format('Build #{0}', github.run_number) }}
+          tag_name: ${{ steps.rel.outputs.tag }}
+          name: ${{ steps.rel.outputs.name }}
           files: build/app-ios-unsigned.ipa
           fail_on_unmatched_files: true
