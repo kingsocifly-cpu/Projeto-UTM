@@ -2,9 +2,9 @@
 const ICON = {
   logo: `<svg viewBox="0 0 36 36" fill="none">
     <defs><linearGradient id="ug" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#3b5bdb"/><stop offset="1" stop-color="#6d8bff"/></linearGradient></defs>
-    <path d="M8 6 V17 a10 10 0 0 0 20 0 V6" stroke="url(#ug)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-    <rect x="24.5" y="3" width="9" height="9" rx="2.6" fill="#37bdff"/></svg>`,
+      <stop offset="0" stop-color="#2f50dd"/><stop offset="1" stop-color="#5f80ff"/></linearGradient></defs>
+    <path d="M8 6 V17 a10 10 0 0 0 20 0 V6" stroke="url(#ug)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="24.5" y="2.5" width="9.5" height="9.5" rx="2.8" fill="#2f9bff"/></svg>`,
   edit: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
     <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`,
