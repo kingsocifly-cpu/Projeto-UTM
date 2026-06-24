@@ -1,0 +1,72 @@
+name: Build iOS e publicar no GitHub
+
+# Dispara ao criar uma tag "v*" (ex: v1.0.0) ou manualmente pela aba Actions.
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: 'Perfil de build do EAS'
+        required: true
+        default: 'preview'
+        type: choice
+        options:
+          - preview
+          - production
+          - preview-simulator
+
+permissions:
+  contents: write
+
+jobs:
+  build-ios:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Configurar EAS / Expo
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Definir perfil de build
+        id: vars
+        run: echo "profile=${{ github.event.inputs.profile || 'preview' }}" >> "$GITHUB_OUTPUT"
+
+      - name: Build iOS no EAS (aguarda concluir)
+        run: |
+          eas build \
+            --platform ios \
+            --profile ${{ steps.vars.outputs.profile }} \
+            --non-interactive \
+            --wait \
+            --json > build-output.json
+          cat build-output.json
+
+      - name: Baixar o artefato (.ipa)
+        run: |
+          URL=$(node -e "const b=require('./build-output.json'); const x=Array.isArray(b)?b[0]:b; console.log(x.artifacts.applicationArchiveUrl)")
+          echo "Artifact URL: $URL"
+          curl -L "$URL" -o app-ios.ipa
+          ls -lh app-ios.ipa
+
+      - name: Publicar na Release do GitHub
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_type == 'tag' && github.ref_name || format('build-{0}', github.run_number) }}
+          name: ${{ github.ref_type == 'tag' && github.ref_name || format('Build manual #{0}', github.run_number) }}
+          files: app-ios.ipa
+          fail_on_unmatched_files: true
