@@ -6,95 +6,43 @@ struct CustomTabBar: View {
     
     var body: some View {
         HStack(spacing: 0) {
-            // Tab 0: Grid (Dashboard)
-            TabBarItem(
-                icon: "square.grid.2x2",
-                isSelected: selectedTab == 0,
-                action: { selectedTab = 0 }
-            )
-            .environmentObject(themeManager)
+            // Tab 0: Grid (Dashboard) — square.grid.2x2
+            tabButton(icon: "square.grid.2x2", index: 0)
             
-            // Tab 1: Facebook
-            TabBarItemCustom(
-                isSelected: selectedTab == 1,
-                action: { selectedTab = 1 }
-            ) {
-                // Facebook "f" logo path
+            // Tab 1: Facebook "f"
+            Button(action: { selectedTab = 1 }) {
                 Text("f")
                     .font(.system(size: 22, weight: .bold, design: .serif))
                     .foregroundColor(selectedTab == 1 ? themeManager.tabBarActiveColor : themeManager.tabBarIconColor)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 28)
             }
-            .environmentObject(themeManager)
             
-            // Tab 2: Video
-            TabBarItem(
-                icon: "video.fill",
-                isSelected: selectedTab == 2,
-                action: { selectedTab = 2 }
-            )
-            .environmentObject(themeManager)
+            // Tab 2: Video camera
+            tabButton(icon: "video.fill", index: 2)
             
-            // Tab 3: Music
-            TabBarItem(
-                icon: "music.note",
-                isSelected: selectedTab == 3,
-                action: { selectedTab = 3 }
-            )
-            .environmentObject(themeManager)
+            // Tab 3: Music note
+            tabButton(icon: "music.note", index: 3)
             
-            // Tab 4: YouTube (play rectangle)
-            TabBarItem(
-                icon: "play.rectangle.fill",
-                isSelected: selectedTab == 4,
-                action: { selectedTab = 4 }
-            )
-            .environmentObject(themeManager)
+            // Tab 4: YouTube play button
+            tabButton(icon: "play.rectangle.fill", index: 4)
             
-            // Tab 5: Menu (hamburger)
-            TabBarItem(
-                icon: "line.3.horizontal",
-                isSelected: selectedTab == 5,
-                action: { selectedTab = 5 }
-            )
-            .environmentObject(themeManager)
+            // Tab 5: Menu hamburger
+            tabButton(icon: "line.3.horizontal", index: 5)
         }
-        .padding(.top, 10)
-        .padding(.bottom, 24)
-        .background(
-            themeManager.tabBarBackgroundColor
-                .shadow(color: Color.black.opacity(0.15), radius: 8, x: 0, y: -2)
-        )
+        .padding(.top, 12)
+        .padding(.bottom, 28)
+        .background(themeManager.tabBarBackgroundColor)
     }
-}
-
-struct TabBarItem: View {
-    @EnvironmentObject var themeManager: ThemeManager
-    let icon: String
-    let isSelected: Bool
-    let action: () -> Void
     
-    var body: some View {
-        Button(action: action) {
+    @ViewBuilder
+    private func tabButton(icon: String, index: Int) -> some View {
+        Button(action: { selectedTab = index }) {
             Image(systemName: icon)
                 .font(.system(size: 20))
-                .foregroundColor(isSelected ? themeManager.tabBarActiveColor : themeManager.tabBarIconColor)
+                .foregroundColor(selectedTab == index ? themeManager.tabBarActiveColor : themeManager.tabBarIconColor)
                 .frame(maxWidth: .infinity)
-                .frame(height: 30)
-        }
-    }
-}
-
-struct TabBarItemCustom<Content: View>: View {
-    @EnvironmentObject var themeManager: ThemeManager
-    let isSelected: Bool
-    let action: () -> Void
-    @ViewBuilder let content: Content
-    
-    var body: some View {
-        Button(action: action) {
-            content
-                .frame(maxWidth: .infinity)
-                .frame(height: 30)
+                .frame(height: 28)
         }
     }
 }

@@ -4,21 +4,21 @@ struct VendasPorProdutoView: View {
     @EnvironmentObject var themeManager: ThemeManager
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 6) {
             HStack {
                 Text("Vendas por Produto")
-                    .font(.uberMove(16, weight: .medium))
+                    .font(.system(size: 15, weight: .medium))
                     .foregroundColor(themeManager.primaryTextColor)
                 
                 Spacer()
                 
                 Image(systemName: "info.circle")
-                    .font(.system(size: 15))
+                    .font(.system(size: 14))
                     .foregroundColor(themeManager.secondaryTextColor)
             }
             
             Text("Nenhuma venda por aqui")
-                .font(.uberMove(14, weight: .regular))
+                .font(.system(size: 13, weight: .regular))
                 .foregroundColor(themeManager.secondaryTextColor)
         }
         .padding(16)
@@ -33,21 +33,21 @@ struct VendasPorFonteView: View {
     @EnvironmentObject var themeManager: ThemeManager
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 6) {
             HStack {
                 Text("Vendas por Fonte")
-                    .font(.uberMove(16, weight: .medium))
+                    .font(.system(size: 15, weight: .medium))
                     .foregroundColor(themeManager.primaryTextColor)
                 
                 Spacer()
                 
                 Image(systemName: "info.circle")
-                    .font(.system(size: 15))
+                    .font(.system(size: 14))
                     .foregroundColor(themeManager.secondaryTextColor)
             }
             
             Text("Nenhuma venda por aqui")
-                .font(.uberMove(14, weight: .regular))
+                .font(.system(size: 13, weight: .regular))
                 .foregroundColor(themeManager.secondaryTextColor)
         }
         .padding(16)

@@ -6,28 +6,26 @@ struct ContentView: View {
     
     var body: some View {
         ZStack(alignment: .bottom) {
-            // Main content area
-            VStack(spacing: 0) {
-                DashboardView()
-                    .environmentObject(themeManager)
-            }
+            // Main content area - full screen
+            DashboardView()
+                .environmentObject(themeManager)
             
-            // Floating Action Button (clipboard icon)
+            // Floating Action Button (clipboard icon) — acima da tab bar, canto direito
             VStack {
                 Spacer()
                 HStack {
                     Spacer()
                     Button(action: {}) {
                         Image(systemName: "doc.on.clipboard.fill")
-                            .font(.system(size: 20))
+                            .font(.system(size: 18))
                             .foregroundColor(.white)
-                            .frame(width: 50, height: 50)
-                            .background(themeManager.blueColor)
+                            .frame(width: 48, height: 48)
+                            .background(Color(hex: "2563EB"))
                             .clipShape(Circle())
-                            .shadow(color: themeManager.blueColor.opacity(0.4), radius: 8, x: 0, y: 4)
+                            .shadow(color: Color(hex: "2563EB").opacity(0.3), radius: 6, x: 0, y: 3)
                     }
                     .padding(.trailing, 16)
-                    .padding(.bottom, 72)
+                    .padding(.bottom, 68)
                 }
             }
             
@@ -36,6 +34,5 @@ struct ContentView: View {
                 .environmentObject(themeManager)
         }
         .background(themeManager.backgroundColor)
-        .edgesIgnoringSafeArea(.bottom)
     }
 }

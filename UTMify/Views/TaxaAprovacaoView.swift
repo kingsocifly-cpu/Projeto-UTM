@@ -5,20 +5,19 @@ struct TaxaAprovacaoView: View {
     let data: DashboardData
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 14) {
             HStack {
                 Text("Taxa de Aprovação")
-                    .font(.uberMove(16, weight: .medium))
+                    .font(.system(size: 15, weight: .medium))
                     .foregroundColor(themeManager.primaryTextColor)
                 
                 Spacer()
                 
                 Image(systemName: "info.circle")
-                    .font(.system(size: 15))
+                    .font(.system(size: 14))
                     .foregroundColor(themeManager.secondaryTextColor)
             }
             
-            // Cartão row
             ApprovalRow(
                 label: "Cartão",
                 value: data.aprovacaoCartao != nil ? String(format: "%.1f%%", data.aprovacaoCartao!) : "N/A",
@@ -26,7 +25,6 @@ struct TaxaAprovacaoView: View {
             )
             .environmentObject(themeManager)
             
-            // Pix row
             ApprovalRow(
                 label: "Pix",
                 value: data.aprovacaoPix != nil ? String(format: "%.1f%%", data.aprovacaoPix!) : "N/A",
@@ -34,7 +32,6 @@ struct TaxaAprovacaoView: View {
             )
             .environmentObject(themeManager)
             
-            // Boleto row
             ApprovalRow(
                 label: "Boleto",
                 value: data.aprovacaoBoleto != nil ? String(format: "%.1f%%", data.aprovacaoBoleto!) : "N/A",
@@ -59,30 +56,30 @@ struct ApprovalRow: View {
     var body: some View {
         HStack {
             Text(label)
-                .font(.uberMove(14, weight: .regular))
+                .font(.system(size: 14, weight: .regular))
                 .foregroundColor(themeManager.primaryTextColor)
             
             Spacer()
             
-            // Circular progress ring
+            // Circle ring
             ZStack {
                 Circle()
                     .stroke(themeManager.separatorColor, lineWidth: 2.5)
-                    .frame(width: 26, height: 26)
+                    .frame(width: 24, height: 24)
                 
                 if let progress = progress {
                     Circle()
                         .trim(from: 0, to: progress)
                         .stroke(themeManager.blueColor, style: StrokeStyle(lineWidth: 2.5, lineCap: .round))
-                        .frame(width: 26, height: 26)
+                        .frame(width: 24, height: 24)
                         .rotationEffect(.degrees(-90))
                 }
             }
             
             Text(value)
-                .font(.uberMove(14, weight: .regular))
+                .font(.system(size: 14, weight: .regular))
                 .foregroundColor(themeManager.primaryTextColor)
-                .frame(width: 40, alignment: .trailing)
+                .frame(width: 36, alignment: .trailing)
         }
     }
 }

@@ -5,19 +5,19 @@ class ThemeManager: ObservableObject {
     
     // MARK: - Background Colors
     var backgroundColor: Color {
-        isDarkMode ? Color(hex: "121212") : Color(hex: "F8F9FA")
+        isDarkMode ? Color(hex: "000000") : Color(hex: "F5F5F5")
     }
     
     var cardBackgroundColor: Color {
-        isDarkMode ? Color(hex: "1E1E1E") : Color.white
+        isDarkMode ? Color(hex: "1C1C1E") : Color.white
     }
     
     var headerBackgroundColor: Color {
-        isDarkMode ? Color(hex: "121212") : Color.white
+        isDarkMode ? Color(hex: "000000") : Color.white
     }
     
     var tabBarBackgroundColor: Color {
-        isDarkMode ? Color(hex: "1A1A1A") : Color.white
+        isDarkMode ? Color(hex: "1C1C1E") : Color.white
     }
     
     // MARK: - Text Colors
@@ -26,51 +26,51 @@ class ThemeManager: ObservableObject {
     }
     
     var secondaryTextColor: Color {
-        isDarkMode ? Color(hex: "9E9E9E") : Color(hex: "757575")
+        isDarkMode ? Color(hex: "8E8E93") : Color(hex: "757575")
     }
     
     var labelTextColor: Color {
-        isDarkMode ? Color(hex: "B0B0B0") : Color(hex: "616161")
+        isDarkMode ? Color(hex: "AEAEB2") : Color(hex: "616161")
     }
     
     // MARK: - Accent Colors
     var greenColor: Color {
-        Color(hex: "4CAF50")
+        Color(hex: "30D158")
     }
     
     var redColor: Color {
-        Color(hex: "F44336")
+        Color(hex: "FF453A")
     }
     
     var blueColor: Color {
-        Color(hex: "2962FF")
+        Color(hex: "0A84FF")
     }
     
     // MARK: - Border/Separator
     var separatorColor: Color {
-        isDarkMode ? Color(hex: "2E2E2E") : Color(hex: "E0E0E0")
+        isDarkMode ? Color(hex: "38383A") : Color(hex: "E5E5EA")
     }
     
     var cardBorderColor: Color {
-        isDarkMode ? Color(hex: "2E2E2E") : Color(hex: "E8E8E8")
+        isDarkMode ? Color.clear : Color(hex: "E5E5EA")
     }
     
     // MARK: - Dropdown Colors
     var dropdownBackgroundColor: Color {
-        isDarkMode ? Color(hex: "2A2A2A") : Color.white
+        isDarkMode ? Color(hex: "2C2C2E") : Color.white
     }
     
     var dropdownBorderColor: Color {
-        isDarkMode ? Color(hex: "404040") : Color(hex: "D0D0D0")
+        isDarkMode ? Color(hex: "48484A") : Color(hex: "D1D1D6")
     }
     
     // MARK: - Tab Bar
     var tabBarIconColor: Color {
-        isDarkMode ? Color(hex: "808080") : Color(hex: "9E9E9E")
+        isDarkMode ? Color(hex: "8E8E93") : Color(hex: "8E8E93")
     }
     
     var tabBarActiveColor: Color {
-        isDarkMode ? Color.white : Color(hex: "2962FF")
+        isDarkMode ? Color(hex: "0A84FF") : Color(hex: "0A84FF")
     }
 }
 

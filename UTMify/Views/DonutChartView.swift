@@ -6,85 +6,81 @@ struct DonutChartView: View {
     
     private var segments: [(value: Double, color: Color, label: String)] {
         [
-            (data.vendasPix, Color(hex: "1565C0"), "Pix"),       // Dark blue
-            (data.vendasCartao, Color(hex: "42A5F5"), "Cartão"), // Light blue
-            (data.vendasBoleto, Color(hex: "FFC107"), "Boleto"), // Yellow/Amber
-            (data.vendasOutros, Color(hex: "EF5350"), "Outros")  // Red/Pink
+            (data.vendasPix, Color(hex: "1565C0"), "Pix"),
+            (data.vendasCartao, Color(hex: "42A5F5"), "Cartão"),
+            (data.vendasBoleto, Color(hex: "FFC107"), "Boleto"),
+            (data.vendasOutros, Color(hex: "EF5350"), "Outros")
         ]
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            // Title with percentages
-            HStack {
-                Text("Vendas por Pagamento")
-                    .font(.uberMove(16, weight: .medium))
-                    .foregroundColor(themeManager.primaryTextColor)
-                
-                Spacer()
-            }
+        VStack(alignment: .leading, spacing: 8) {
+            // Title
+            Text("Vendas por Pagamento")
+                .font(.system(size: 15, weight: .medium))
+                .foregroundColor(themeManager.primaryTextColor)
+                .padding(.bottom, 4)
             
-            // Percentage labels around chart
+            // Chart area with percentage labels
             ZStack {
-                // Main donut
+                // Donut ring
                 DonutShape(segments: segments.map { $0.value })
-                    .frame(width: 180, height: 180)
+                    .frame(width: 170, height: 170)
                 
-                // Center label
-                VStack(spacing: 2) {
+                // Center "Total" label
+                VStack(spacing: 1) {
                     Text("Total")
-                        .font(.uberMove(14, weight: .regular))
+                        .font(.system(size: 13, weight: .regular))
                         .foregroundColor(themeManager.secondaryTextColor)
                     Text("\(data.totalVendas)")
-                        .font(.uberMove(22, weight: .bold))
+                        .font(.system(size: 20, weight: .bold))
                         .foregroundColor(themeManager.primaryTextColor)
                 }
                 
-                // Percentage labels positioned around donut
-                // Top-left area: 3.0% (Outros)
+                // Percentages around the donut
                 Text("3.0%")
-                    .font(.uberMove(11, weight: .regular))
+                    .font(.system(size: 11))
                     .foregroundColor(themeManager.secondaryTextColor)
-                    .offset(x: -20, y: -100)
+                    .offset(x: -15, y: -100)
                 
-                // Left area: 6.0% (Boleto)
                 Text("6.0%")
-                    .font(.uberMove(11, weight: .regular))
+                    .font(.system(size: 11))
                     .foregroundColor(themeManager.secondaryTextColor)
-                    .offset(x: -80, y: -50)
+                    .offset(x: -85, y: -40)
                 
-                // Bottom-left: 24.7% (Cartão)
                 Text("24.7%")
-                    .font(.uberMove(11, weight: .regular))
+                    .font(.system(size: 11))
                     .foregroundColor(themeManager.secondaryTextColor)
-                    .offset(x: -90, y: 40)
+                    .offset(x: -85, y: 50)
                 
-                // Bottom-right: 66.4% (Pix)
                 Text("66.4%")
-                    .font(.uberMove(11, weight: .regular))
+                    .font(.system(size: 11))
                     .foregroundColor(themeManager.secondaryTextColor)
-                    .offset(x: 80, y: 70)
+                    .offset(x: 85, y: 60)
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 20)
+            .frame(height: 220)
             
-            // Legend
-            HStack(spacing: 16) {
+            // Legend row
+            HStack(spacing: 0) {
                 Spacer()
                 ForEach(0..<segments.count, id: \.self) { index in
-                    HStack(spacing: 5) {
+                    HStack(spacing: 4) {
                         Circle()
                             .fill(segments[index].color)
                             .frame(width: 8, height: 8)
                         Text(segments[index].label)
-                            .font(.uberMove(12, weight: .regular))
+                            .font(.system(size: 11, weight: .regular))
                             .foregroundColor(themeManager.secondaryTextColor)
+                    }
+                    if index < segments.count - 1 {
+                        Spacer()
                     }
                 }
                 Spacer()
             }
         }
-        .padding(20)
+        .padding(16)
         .background(themeManager.cardBackgroundColor)
         .cornerRadius(12)
         .padding(.horizontal, 16)
@@ -93,13 +89,13 @@ struct DonutChartView: View {
 
 struct DonutShape: View {
     let segments: [Double]
-    private let lineWidth: CGFloat = 32
+    private let lineWidth: CGFloat = 28
     
     private let colors: [Color] = [
-        Color(hex: "1565C0"), // Pix - Dark blue
-        Color(hex: "42A5F5"), // Cartão - Light blue
-        Color(hex: "FFC107"), // Boleto - Yellow
-        Color(hex: "EF5350")  // Outros - Red
+        Color(hex: "1565C0"),
+        Color(hex: "42A5F5"),
+        Color(hex: "FFC107"),
+        Color(hex: "EF5350")
     ]
     
     private func startAngle(for index: Int) -> Angle {

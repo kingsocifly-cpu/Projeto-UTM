@@ -9,121 +9,119 @@ struct ResumoFilterView: View {
     @State private var fonteTrafego = "Qualquer"
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            // "Resumo" title
+        VStack(alignment: .leading, spacing: 14) {
+            // Title "Resumo"
             Text("Resumo")
-                .font(.uberMove(24, weight: .medium))
+                .font(.system(size: 22, weight: .medium))
                 .foregroundColor(themeManager.primaryTextColor)
             
-            // "Atualizado agora mesmo" + "Atualizar" button
+            // "Atualizado agora mesmo" + "Atualizar" button row
             HStack {
                 Text("Atualizado agora mesmo")
-                    .font(.uberMove(13, weight: .bold))
+                    .font(.system(size: 13, weight: .semibold))
                     .foregroundColor(themeManager.primaryTextColor)
                 
                 Spacer()
                 
                 Button(action: {}) {
                     Text("Atualizar")
-                        .font(.uberMove(14, weight: .medium))
+                        .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(.white)
-                        .padding(.horizontal, 24)
+                        .padding(.horizontal, 20)
                         .padding(.vertical, 10)
-                        .background(themeManager.blueColor)
+                        .background(Color(hex: "2563EB"))
                         .cornerRadius(6)
                 }
             }
             
-            // Separator line
+            // Separator
             Rectangle()
                 .fill(themeManager.separatorColor)
-                .frame(height: 1)
+                .frame(height: 0.5)
             
-            // Row 1: Período de visualização + Conta de anúncio
+            // Row 1: Período + Conta
             HStack(spacing: 12) {
-                FilterDropdown(
+                DropdownField(
                     label: "Período de visualização",
                     value: $periodoVisualizacao,
-                    hasInfoIcon: true
+                    showInfo: true
                 )
                 .environmentObject(themeManager)
                 
-                FilterDropdown(
+                DropdownField(
                     label: "Conta de anúncio",
                     value: $contaAnuncio,
-                    hasInfoIcon: false
+                    showInfo: false
                 )
                 .environmentObject(themeManager)
             }
             
             // Row 2: Plataformas + Produto
             HStack(spacing: 12) {
-                FilterDropdown(
+                DropdownField(
                     label: "Plataformas",
                     value: $plataforma,
-                    hasInfoIcon: false
+                    showInfo: false
                 )
                 .environmentObject(themeManager)
                 
-                FilterDropdown(
+                DropdownField(
                     label: "Produto",
                     value: $produto,
-                    hasInfoIcon: false
+                    showInfo: false
                 )
                 .environmentObject(themeManager)
             }
             
             // Row 3: Fonte de Tráfego (full width)
-            FilterDropdown(
+            DropdownField(
                 label: "Fonte de Tráfego",
                 value: $fonteTrafego,
-                hasInfoIcon: false
+                showInfo: false
             )
             .environmentObject(themeManager)
         }
-        .padding(20)
+        .padding(16)
         .background(themeManager.cardBackgroundColor)
         .cornerRadius(12)
         .padding(.horizontal, 16)
     }
 }
 
-struct FilterDropdown: View {
+struct DropdownField: View {
     @EnvironmentObject var themeManager: ThemeManager
     let label: String
     @Binding var value: String
-    var hasInfoIcon: Bool = false
+    var showInfo: Bool = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            // Label
             HStack(spacing: 4) {
                 Text(label)
-                    .font(.uberMove(12, weight: .regular))
+                    .font(.system(size: 12, weight: .regular))
                     .foregroundColor(themeManager.labelTextColor)
                     .lineLimit(1)
                 
-                if hasInfoIcon {
+                if showInfo {
                     Image(systemName: "info.circle")
-                        .font(.system(size: 11))
+                        .font(.system(size: 10))
                         .foregroundColor(themeManager.secondaryTextColor)
                 }
             }
             
-            // Dropdown button
             HStack {
                 Text(value)
-                    .font(.uberMove(14, weight: .regular))
+                    .font(.system(size: 14, weight: .regular))
                     .foregroundColor(themeManager.primaryTextColor)
                 
                 Spacer()
                 
                 Image(systemName: "chevron.down")
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.system(size: 10, weight: .medium))
                     .foregroundColor(themeManager.secondaryTextColor)
             }
             .padding(.horizontal, 12)
-            .padding(.vertical, 12)
+            .padding(.vertical, 11)
             .background(themeManager.dropdownBackgroundColor)
             .cornerRadius(8)
             .overlay(

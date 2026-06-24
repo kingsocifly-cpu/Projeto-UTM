@@ -12,7 +12,7 @@ struct DashboardView: View {
             
             // Scrollable Dashboard Content
             ScrollView(.vertical, showsIndicators: false) {
-                VStack(spacing: 12) {
+                VStack(spacing: 10) {
                     
                     // 1. Resumo / Filters Card
                     ResumoFilterView()
@@ -42,19 +42,21 @@ struct DashboardView: View {
                     )
                     .environmentObject(themeManager)
                     
-                    // 5. ROAS (green value)
+                    // 5. ROAS — label verde + valor verde
                     MetricCardView(
                         title: "ROAS",
                         value: String(format: "%.2f", dashboardData.roas),
+                        titleColor: themeManager.greenColor,
                         valueColor: themeManager.greenColor,
                         hasInfo: true
                     )
                     .environmentObject(themeManager)
                     
-                    // 6. Lucro (green value)
+                    // 6. Lucro — label verde + valor verde
                     MetricCardView(
                         title: "Lucro",
                         value: formatCurrency(dashboardData.lucro),
+                        titleColor: themeManager.greenColor,
                         valueColor: themeManager.greenColor,
                         hasInfo: true
                     )
@@ -72,10 +74,11 @@ struct DashboardView: View {
                     )
                     .environmentObject(themeManager)
                     
-                    // 9. ROI (red value)
+                    // 9. ROI — label vermelho + valor vermelho
                     MetricCardView(
                         title: "ROI",
                         value: dashboardData.roi != nil ? String(format: "%.1f%%", dashboardData.roi!) : "N/A",
+                        titleColor: themeManager.redColor,
                         valueColor: themeManager.redColor,
                         hasInfo: true
                     )
@@ -217,7 +220,7 @@ struct DashboardView: View {
                     Spacer()
                         .frame(height: 100)
                 }
-                .padding(.top, 12)
+                .padding(.top, 8)
             }
         }
         .background(themeManager.backgroundColor)
